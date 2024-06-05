@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>工作性价比计算</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: auto;
+        }
+
+        input[type="password"],
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 2px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-top: 20px;
+            padding: 8px;
+            width: 100%;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        button:not(:disabled):hover {
+            background-color: #45a049;
+        }
+
+        button:disabled {
+            background-color: #cccccc;
+            color: #666666;
+            cursor: not-allowed;
+        }
+
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 350px;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+
+        select,
+        input[type="number"],
+        input[type="password"],
+        button {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 2px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 2;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 300px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-content h2 {
+            font-size: 18px;
+            margin-top: 0;
+            text-align: center;
+        }
+
+        .modal-content p {
+            font-size: 20px;
+            /* 调整字体大小 */
+            margin: 20px 0;
+            /* 增加上下边距 */
+            text-align: center;
+        }
+
+        .result {
+            font-size: 34px;
+            /* 巨大的字体大小 */
+            font-weight: bold;
+            /* 加粗字体 */
+            color: #333;
+            margin: 20px 0;
+        }
+
+        .unhappy {
+            color: #d9534f;
+        }
+
+        .great {
+            color: #5cb85c;
+        }
+
+        .heavenly {
+            color: #337ab7;
+        }
+
+        .modal-close {
+            float: right;
+            font-size: 20px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>工作性价比计算</h1>
+
+        <label for="salary">月薪:</label>
+        <input type="password" id="salary" name="salary">
+        <button onclick="toggleVisibility()">显示/隐藏</button><br><br>
+
+        <label for="worktime">工作时长 (小时):</label>
+        <input type="number" id="worktime" name="worktime"><br><br>
+
+        <label for="commutetime">通勤时长 (小时):</label>
+        <input type="number" id="commutetime" name="commutetime"><br><br>
+
+        <label for="idletime">摸鱼时长 (小时):</label>
+        <input type="number" id="idletime" name="idletime"><br><br>
+
+        <label for="work">工作环境系数:</label>
+        <select id="work">
+            <option value="0.8">偏僻地区或郊区的工厂、工地、艰苦户外等工作环境</option>
+            <option value="0.9">工厂、工地、艰苦户外等工作环境</option>
+            <option value="1.0">普通环境</option>
+            <option value="1.1">CBD、体制内等工作环境</option>
+        </select><br><br>
+
+        <label for="sender">异性环境系数:</label>
+        <select id="sender">
+            <option value="0.9">周围没有好看异性</option>
+            <option value="1.0">周围好看的异性不多不少</option>
+            <option value="1.1">周围很多好看异性</option>
+        </select><br><br>
+
+        <label for="coworker">同事环境系数:</label>
+        <select id="coworker">
+            <option value="0.95">周围脑残同事较多</option>
+            <option value="1.0">周围基本上都是普通同事</option>
+            <option value="1.05">周围优秀同事较多</option>
+        </select><br><br>
+
+        <label for="earlyarrival">是否8:30前到公司:</label>
+        <select id="earlyarrival">
+            <option value="0.95">是</option>
+            <option value="1">否</option>
+        </select><br><br>
+
+        <label for="education">学历:</label>
+        <select id="education">
+            <option value="0.8">专科及以下学历</option>
+            <option value="1.0">普通本科学历</option>
+            <option value="1.2">211/985本科学历</option>
+            <option value="1.4">普通硕士学历</option>
+            <option value="1.6">211/985硕士学历</option>
+            <option value="1.8">普通博士学历</option>
+            <option value="2.0">211/985博士学历</option>
+        </select><br><br>
+
+        <button id="calculateButton" onclick="calculateValue()" disabled>计算工作性价比</button>
+        <button onclick="resetForm()">重置</button>
+    </div>
+
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal()">&times;</span>
+            <h2>计算结果</h2>
+            <p id="modal-text"></p>
+        </div>
+    </div>
+
+    <script>
+        function toggleVisibility() {
+            var salaryInput = document.getElementById("salary");
+            if (salaryInput.type === "password") {
+                salaryInput.type = "text";
+            } else {
+                salaryInput.type = "password";
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const inputs = document.querySelectorAll('#salary, #worktime, #commutetime, #idletime');
+            inputs.forEach(input => {
+                input.addEventListener('input', checkInputs);
+            });
+            checkInputs(); // Initial check on page load
+        });
+
+        function checkInputs() {
+            var salary = document.getElementById('salary').value;
+            var worktime = document.getElementById('worktime').value;
+            var commutetime = document.getElementById('commutetime').value;
+            var idletime = document.getElementById('idletime').value;
+
+            var isAllFilled = salary && worktime && commutetime && idletime; // Check if all fields are filled
+            document.getElementById('calculateButton').disabled = !isAllFilled; // Enable or disable the button
+        }
+
+        function calculateValue() {
+            var salary = parseFloat(document.getElementById("salary").value);
+            var worktime = parseFloat(document.getElementById("worktime").value);
+            var commutetime = parseFloat(document.getElementById("commutetime").value);
+            var idletime = parseFloat(document.getElementById("idletime").value);
+            var workEnv = parseFloat(document.getElementById("work").value);
+            var senderEnv = parseFloat(document.getElementById("sender").value);
+            var coworkerEnv = parseFloat(document.getElementById("coworker").value);
+            var earlyArrival = parseFloat(document.getElementById("earlyarrival").value);
+            var education = parseFloat(document.getElementById("education").value);
+
+            var totalHours = worktime + commutetime - 0.5 * idletime;
+            var result = (salary / 21.75 * workEnv * senderEnv * coworkerEnv) / (35 * totalHours * education);
+            result *= earlyArrival;
+
+            // Call displayResult to handle displaying the result and any associated ratings
+            displayResult(result);
+        }
+
+        function displayResult(result) {
+            var resultText = "您的工作性价比为: " + result.toFixed(2);
+            var rating;
+            if (result < 0.8) {
+                rating = "<div class='result unhappy'>🐮不幸福🐴</div>";
+            } else if (result >= 0.8 && result < 1.5) {
+                rating = "<div class='result heavenly'>🥺很爽了🙏</div>";
+            } else {
+                rating = "<div class='result great'>🥰神仙工作🎉</div>";
+            }
+            document.getElementById("modal-text").innerHTML = resultText + rating;
+            showModal();
+        }
+
+        function resetForm() {
+            document.getElementById("salary").value = "";
+            document.getElementById("worktime").value = "";
+            document.getElementById("commutetime").value = "";
+            document.getElementById("idletime").value = "";
+            document.getElementById("work").selectedIndex = 0;
+            document.getElementById("sender").selectedIndex = 0;
+            document.getElementById("coworker").selectedIndex = 0;
+            document.getElementById("earlyarrival").selectedIndex = 0;
+            document.getElementById("education").selectedIndex = 0;
+
+            // After resetting the form fields, also check to disable the calculate button
+            checkInputs();
+        }
+
+        function showModal() {
+            document.getElementById("modal").style.display = "flex";
+        }
+
+        function closeModal() {
+            document.getElementById("modal").style.display = "none";
+        }
+    </script>
+
+</body>
+
+</html>
